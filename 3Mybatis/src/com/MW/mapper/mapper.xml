@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace来绑定类文件-->
+<!--使用接口实现方法-->
+<mapper namespace="com.MW.mapper.Mapper">
+    <!--type就是返回值类型（这里使用了起别名，在mybatis的配置文件中）-->
+    <resultMap id="NewScores" type="Scores">
+        <!--column对应的是数据库中的变量名，propert对应的是实体类中的变量名y-->
+        <result column="sno" property="sid"/>
+        <result column="cno" property="cid"/>
+    </resultMap>
+    <!--id是语句的名称，resultMap是要映射到的自定义类-->
+    <select id="selectScores" resultMap="NewScores">
+        select * from scores
+    </select>
+
+    <select id="getScoresBySid" resultMap="NewScores">
+        select * from scores where sno = #{sid};
+    </select>
+
+    <insert id="addScores" parameterType="Scores">
+        insert into scores values(#{sid}, #{cid}, #{grade})
+    </insert>
+
+    <delete id="deleteScores">
+        delete from scores where sno = #{sid} and cno = #{cid}
+    </delete>
+
+    <resultMap id="newStudent" type="Student">
+        <result column="sno" property="sid"/>
+        <result column="sname" property="name"/>
+        <result column="sex" property="sex"/>
+        <collection property="scoresList" ofType="Scores">
+            <result column="sno" property="sid"/>
+            <result column="cno" property="cid"/>
+        </collection>
+    </resultMap>
+    <select id="selectStudent" resultMap="newStudent">
+        select student.sno,student.sname,student.sex,scores.sno,scores.cno, scores.grade
+        from student
+        inner join scores on student.sno = scores.sno
+    </select>
+
+</mapper>
